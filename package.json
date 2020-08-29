@@ -1,0 +1,27 @@
+{
+  "name": "hubspot-jb",
+  "version": "1.0.0",
+  "description": "Testando a api do hubspot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jonathanbachsantos/hubspot-jb.git"
+  },
+  "keywords": [
+    "hubspot",
+    "nodejs"
+  ],
+  "author": "Jonathan Bach",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jonathanbachsantos/hubspot-jb/issues"
+  },
+  "homepage": "https://github.com/jonathanbachsantos/hubspot-jb#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

@@ -4,7 +4,7 @@
   "description": "Testando a api do hubspot",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node ./src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/jonathanbachsantos/hubspot-jb#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "@hubspot/api-client": "^2.1.1",
+    "express": "^4.17.1",
+    "request": "^2.88.2"
   }
 }

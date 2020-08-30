@@ -1,6 +1,16 @@
-const hubspot = require('@hubspot/api-client')
+const hubspot = require('@hubspot/api-client');
+const apiHubspot = require('../services/api');
 
 module.exports = class ContactsController {
+    constructor() {
+        apiHubspot.post('lists?hapikey=demo', {"name":`jonathan.bach_dos_santos.${Date.now()}`})
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }
     async index(request, response) {
         return response.send('ok')
     }

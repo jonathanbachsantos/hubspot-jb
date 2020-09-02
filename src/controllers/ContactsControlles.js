@@ -1,44 +1,60 @@
-const hubspot = require('@hubspot/api-client');
 const apiHubspot = require('../services/api');
+const ratelimit = require('../utils/ratelimit')
+
+const fs = require('fs');
 
 module.exports = class ContactsController {
     constructor() {
-        apiHubspot.post('lists?hapikey=demo', {"name":`jonathan.bach_dos_santos.${Date.now()}`})
-          .then(function (response) {
-            console.log(response);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        apiHubspot.post('lists', { "name": `jonathan.bach_dos_santos.${Date.now()}` })
+            .then(function (response) {
+                global.listId = response.data.listId;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
     async index(request, response) {
         return response.send('ok')
     }
 
     async create(request, response) {
+        fs.readFile('contatos.csv', 'utf8', async function (err, data) {
+            console.log(err)
+            let dataArray = data.split(/\r?\n/);
 
-        const contactObj = {
-            properties: {
-                firstname: 'Jonathan',
-                lastname: 'Bach'
-            }
-        };
-        const companyObj = {
-            properties: {
-                domain: 'somapp.com',
-                name: 'somapp'
-            }
-        };
 
-        try {
-            const hubspotClient = new hubspot.Client({ apiKey: 'ae4319f0-8941-432e-a3ca-da7487edef32' });
-            const createContactResponse = await hubspotClient.crm.contacts.basicApi.create(contactObj)
-            const createCompanyResponse = await hubspotClient.crm.companies.basicApi.create(companyObj)
-            await hubspotClient.crm.companies.associationsApi.create(createCompanyResponse.body.id, 'contacts', createContactResponse.body.id)
-            return response.send('sucesso');
-        } catch (error) {
-            return response.send('erro');
-        }
+            let vId = [];
+            let properties = dataArray[0].split(',')
+
+            dataArray.shift()
+            dataArray = dataArray.map((data) => {
+                return data ? apiHubspot.post('contact', {
+                    "properties": data.split(',').map((aux, index) => {
+                        return { property: properties[index].replace('_', ''), value: aux }
+                    })
+                }) : null
+
+            })
+
+
+            await Promise.all(dataArray).then(async function (response) {
+                for (let i = 0; i < response.length; i++) {
+                    vId.push(response[i].data.vid);
+                    console.log(await ratelimit(response[i].headers))
+                }
+            }).catch(function (error) {
+                console.log('erro')
+            });
+            await apiHubspot.post(`lists/${global.listId}/add`, {
+                "vids": vId,
+                "emails": [
+                    "testingapisBACH@hubspot.com"
+                ]
+            }).catch(function (error) {
+                console.log(error);
+            });
+            return response.send(data)
+        });
 
 
     }

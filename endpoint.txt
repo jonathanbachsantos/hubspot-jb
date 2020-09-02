@@ -1,0 +1,7 @@
+# API REST http://localhost:3000
+
+#lista de contatos
+GET  /contacts
+
+#post csv
+POST /contacts
